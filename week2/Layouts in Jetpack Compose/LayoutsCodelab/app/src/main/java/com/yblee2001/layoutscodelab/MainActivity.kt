@@ -19,8 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.yblee2001.layoutscodelab.ui.theme.LayoutsCodelabTheme
@@ -31,7 +36,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LayoutsCodelabTheme {
-                ImageList()
+                LayoutsCodelab()
             }
         }
     }
@@ -92,13 +97,13 @@ fun LayoutsCodelab() {
     }
 }
 
-@Composable
-fun BodyContent(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Text(text = "Hi there!")
-        Text(text = "Thanks for going through the Layouts Codelab")
-    }
-}
+//@Composable
+//fun BodyContent(modifier: Modifier = Modifier) {
+//    Column(modifier = modifier) {
+//        Text(text = "Hi there!")
+//        Text(text = "Thanks for going through the Layouts Codelab")
+//    }
+//}
 
 @Composable
 fun SimpleList() {
@@ -170,6 +175,57 @@ fun ImageList() {
     }
 }
 
+fun Modifier.firstBaseLineToTop(
+    firstBaselineToTop: Dp
+) = this.then (
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints = constraints)
+
+        check(placeable[FirstBaseline] != AlignmentLine.Unspecified)
+        val firstBaseline = placeable[FirstBaseline]
+
+        val placeableY = firstBaselineToTop.roundToPx() - firstBaseline
+        val height = placeable.height + placeableY
+        layout(placeable.width, height) {
+            placeable.placeRelative(0, placeableY)
+        }
+    }
+)
+
+@Composable
+fun CustomColumn(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints = constraints)
+        }
+
+        var yPosition = 0
+
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeables.forEach { placeable ->
+                placeable.placeRelative(x = 0, y = yPosition)
+                yPosition += placeable.height
+            }
+        }
+    }
+}
+
+@Composable
+fun BodyContent(modifier: Modifier = Modifier) {
+    CustomColumn(modifier.padding(8.dp)) {
+        Text("CustomColumn")
+        Text("places items")
+        Text("vertically")
+        Text("We've done it by hand!")
+    }
+}
+
 // PREVIEWS
 
 @Preview(showBackground = true)
@@ -209,5 +265,21 @@ fun LazyListPreview() {
 fun ImageListPreview() {
     LayoutsCodelabTheme {
         ImageList()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TextWithPaddingToBaselinePreview() {
+    LayoutsCodelabTheme {
+        Text("Hello World!", Modifier.firstBaseLineToTop(32.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TextWithNormalPaddingPreview() {
+    LayoutsCodelabTheme {
+        Text("Hello World!", Modifier.padding(top = 32.dp))
     }
 }
