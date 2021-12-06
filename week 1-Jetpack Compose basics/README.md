@@ -10,3 +10,8 @@ Basics에 올려둔 코드는 테마 관련 코드 확인용입니다.
 ## 작업 후
 직접 생성한 프로젝트를 여기에 붙여 넣어주세요.
 Git 명령어 또는 [SourceTree](https://www.sourcetreeapp.com/), [GitKraken](https://www.gitkraken.com/) 등을 이용해 작업 결과를 push 해주세요.
+
+## 작업 링크(?)
+https://github.com/yblee2001/ComposeFest2021/tree/main/week1
+
+P.S. 무엇을 붙여 넣어야할지 몰라서 일단 링크를 붙였습니다. 감사합니다.
