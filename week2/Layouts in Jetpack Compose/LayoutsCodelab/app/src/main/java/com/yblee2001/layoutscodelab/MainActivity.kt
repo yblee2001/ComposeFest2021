@@ -245,7 +245,8 @@ fun StaggeredGrid(
             val placeable = measurable.measure(constraints = constraints)
             val row = index % rows
             rowWidths[row] += placeable.width
-            rowHeights[row] += Math.max(rowHeights[row], placeable.height)
+            rowHeights[row] = Math.max(rowHeights[row], placeable.height)
+
             placeable
         }
 
@@ -261,6 +262,7 @@ fun StaggeredGrid(
 
         layout(width, height) {
             val rowX = IntArray(rows) { 0 }
+
             placeables.forEachIndexed { index, placeable ->
                 val row = index % rows
                 placeable.placeRelative(
@@ -303,13 +305,18 @@ val topics = listOf(
 
 @Composable
 fun BodyContent(modifier: Modifier = Modifier) {
-    Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
-        StaggeredGrid() {
-            for (topic in topics) {
-                Chip(modifier = Modifier.padding(8.dp), text = topic)
+    Row(modifier = modifier
+        .background(color = Color.LightGray)
+        .padding(16.dp)
+        .size(200.dp)
+        .horizontalScroll(rememberScrollState()),
+        content = {
+            StaggeredGrid {
+                for (topic in topics) {
+                    Chip(modifier = Modifier.padding(8.dp), text = topic)
+                }
             }
-        }
-    }
+        })
 }
 
 
