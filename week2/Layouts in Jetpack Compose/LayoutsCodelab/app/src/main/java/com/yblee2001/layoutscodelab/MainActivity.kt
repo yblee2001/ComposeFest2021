@@ -405,6 +405,36 @@ private fun decoupledConstraints(margin: Dp): ConstraintSet {
     }
 }
 
+@Composable
+fun TwoTexts(modifier: Modifier = Modifier, text1: String, text2: String) {
+    Row(modifier = modifier.height(IntrinsicSize.Min)) {
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 10.dp)
+                .wrapContentWidth(Alignment.Start),
+            text = text1,
+            color = Color.Black
+        )
+
+        Divider(
+            color = Color.Black,
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(1.dp)
+        )
+
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 10.dp)
+                .wrapContentWidth(Alignment.End),
+            text = text2,
+            color = Color.Black
+        )
+    }
+}
+
 // PREVIEWS
 
 @Preview(showBackground = true)
@@ -484,5 +514,15 @@ fun ConstraintLayoutContentPreview() {
 fun LargeConstraintLayoutPreview() {
     LayoutsCodelabTheme {
         LargeConstraintLayout()
+    }
+}
+
+@Preview
+@Composable
+fun TwoTextsPreview() {
+    LayoutsCodelabTheme {
+        Surface {
+            TwoTexts(text1 = "Hello", text2 = "World")
+        }
     }
 }
