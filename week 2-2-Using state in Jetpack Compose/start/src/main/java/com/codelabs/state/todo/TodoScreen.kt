@@ -25,9 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codelabs.state.util.generateRandomTodoItem
@@ -108,11 +110,12 @@ private fun randomTint(): Float {
     return Random.nextFloat().coerceIn(0.3f, 0.9f)
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TodoInputTextField(
     text: String,
     onTextChange: (String) -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     TodoInputText(text, onTextChange, modifier)
 }
@@ -120,6 +123,13 @@ fun TodoInputTextField(
 @Composable
 fun TodoItemInput(onItemComplete: (TodoItem) -> Unit) {
     val (text, setText) = remember { mutableStateOf("") }
+    val (icon, setIcon) = remember { mutableStateOf(TodoIcon.Default) }
+    val iconsVisible = text.isNotBlank()
+    val submit = {
+        onItemComplete(TodoItem(text, icon))
+        setIcon(TodoIcon.Default)
+        setText("")
+    }
 
     Column {
         Row(
@@ -127,22 +137,25 @@ fun TodoItemInput(onItemComplete: (TodoItem) -> Unit) {
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp)
         ) {
-            TodoInputTextField(
+            TodoInputText(
                 text = text,
                 onTextChange = setText,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp)
+                    .padding(end = 8.dp),
+                onImeAction = submit
             )
             TodoEditButton(
-                onClick = {
-                    onItemComplete(TodoItem(text))
-                    setText("")
-                },
+                onClick = submit,
                 text = "Add",
                 modifier = Modifier.align(Alignment.CenterVertically),
                 enabled = text.isNotBlank()
             )
+        }
+        if (iconsVisible) {
+            AnimatedIconRow(icon, setIcon, Modifier.padding(top = 8.dp) )
+        } else {
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
