@@ -46,10 +46,6 @@ class TodoViewModel : ViewModel() {
         currentEditPosition = todoItems.indexOf(item)
     }
 
-    fun onEditDone() {
-        currentEditPosition = -1
-    }
-
     fun onEditItemChange(item: TodoItem) {
         val currentItem = requireNotNull(currentEditItem)
         require(currentItem.id == item.id) {
@@ -58,4 +54,7 @@ class TodoViewModel : ViewModel() {
         todoItems[currentEditPosition] = item
     }
 
+    fun onEditDone() {
+        currentEditPosition = -1
+    }
 }
